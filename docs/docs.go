@@ -213,6 +213,50 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/topup": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "top up user balance based on token",
+                "parameters": [
+                    {
+                        "description": "Top Up",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TopUpBalanceDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpSuccess-string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -231,25 +275,32 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.TopUpBalanceDto": {
+            "type": "object",
+            "required": [
+                "balance"
+            ],
+            "properties": {
+                "balance": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.UpsertUserDto": {
             "type": "object",
             "required": [
-                "age",
                 "email",
-                "password",
-                "username"
+                "full_name",
+                "password"
             ],
             "properties": {
-                "age": {
-                    "type": "integer"
-                },
                 "email": {
                     "type": "string"
                 },
-                "password": {
+                "full_name": {
                     "type": "string"
                 },
-                "username": {
+                "password": {
                     "type": "string"
                 }
             }

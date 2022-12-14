@@ -6,7 +6,7 @@ type UserModel struct {
 	Email              string                    `gorm:"uniqueIndex" json:"email"`
 	Password           string                    `json:"password"`
 	Role               string                    `json:"role"`
-	Balance            int64                     `json:"balance"`
+	Balance            int64                     `gorm:"default:0" json:"balance"`
 	TransactionHistory []TransactionHistoryModel `json:"transaction_history" gorm:"foreignKey:UserID;references:ID"`
 }
 

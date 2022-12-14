@@ -19,6 +19,7 @@ type UserController interface {
 	GetUsers(ctx *gin.Context)
 	UpdateUser(ctx *gin.Context)
 	DeleteUser(ctx *gin.Context)
+	TopUpBalance(ctx *gin.Context)
 }
 
 type userController struct {
@@ -34,13 +35,13 @@ func NewUserController(
 }
 
 // Register godoc
-// @Tags    User
-// @Summary create a user
-// @Param   user body     dto.UpsertUserDto true "Create User DTO"
-// @Success 201  {object} utils.HttpSuccess[dto.UpsertUserDto]
-// @Failure 400  {object} utils.HttpError
-// @Failure 500  {object} utils.HttpError
-// @Router  /user/register [post]
+//	@Tags		User
+//	@Summary	create a user
+//	@Param		user	body		dto.UpsertUserDto	true	"Create User DTO"
+//	@Success	201		{object}	utils.HttpSuccess[dto.UpsertUserDto]
+//	@Failure	400		{object}	utils.HttpError
+//	@Failure	500		{object}	utils.HttpError
+//	@Router		/user/register [post]
 func (c *userController) Register(ctx *gin.Context) {
 	var dto dto.UpsertUserDto
 	err := ctx.BindJSON(&dto)
@@ -60,13 +61,13 @@ func (c *userController) Register(ctx *gin.Context) {
 }
 
 // Login godoc
-// @Tags    User
-// @Summary login a user
-// @Param   user body     dto.LoginDto true "Login User DTO"
-// @Success 200  {object} utils.HttpSuccess[models.LoginResponse]
-// @Failure 400  {object} utils.HttpError
-// @Failure 500  {object} utils.HttpError
-// @Router  /user/login [post]
+//	@Tags		User
+//	@Summary	login a user
+//	@Param		user	body		dto.LoginDto	true	"Login User DTO"
+//	@Success	200		{object}	utils.HttpSuccess[models.LoginResponse]
+//	@Failure	400		{object}	utils.HttpError
+//	@Failure	500		{object}	utils.HttpError
+//	@Router		/user/login [post]
 func (c *userController) Login(ctx *gin.Context) {
 	var dto dto.LoginDto
 	err := ctx.BindJSON(&dto)
@@ -103,14 +104,14 @@ func (c *userController) Login(ctx *gin.Context) {
 }
 
 // GetUsers godoc
-// @Tags     User
-// @Summary  get mutilple users
-// @Success  200 {object} utils.HttpSuccess[[]models.UserModel]
-// @Failure  401 {object} utils.HttpError
-// @Failure  400 {object} utils.HttpError
-// @Failure  500 {object} utils.HttpError
-// @Router   /user [get]
-// @Security BearerAuth
+//	@Tags		User
+//	@Summary	get mutilple users
+//	@Success	200	{object}	utils.HttpSuccess[[]models.UserModel]
+//	@Failure	401	{object}	utils.HttpError
+//	@Failure	400	{object}	utils.HttpError
+//	@Failure	500	{object}	utils.HttpError
+//	@Router		/user [get]
+//	@Security	BearerAuth
 func (c *userController) GetUsers(ctx *gin.Context) {
 	users, err := c.userService.GetUsers()
 
@@ -123,14 +124,14 @@ func (c *userController) GetUsers(ctx *gin.Context) {
 }
 
 // UpdateUser godoc
-// @Tags     User
-// @Summary  create a user
-// @Param    user body     dto.UpsertUserDto true "Update User Based On Token"
-// @Success  200  {object} utils.HttpSuccess[dto.UpsertUserDto]
-// @Failure  400  {object} utils.HttpError
-// @Failure  500  {object} utils.HttpError
-// @Router   /user [put]
-// @Security BearerAuth
+//	@Tags		User
+//	@Summary	create a user
+//	@Param		user	body		dto.UpsertUserDto	true	"Update User Based On Token"
+//	@Success	200		{object}	utils.HttpSuccess[dto.UpsertUserDto]
+//	@Failure	400		{object}	utils.HttpError
+//	@Failure	500		{object}	utils.HttpError
+//	@Router		/user [put]
+//	@Security	BearerAuth
 func (c *userController) UpdateUser(ctx *gin.Context) {
 	var dto dto.UpsertUserDto
 	err := ctx.BindJSON(&dto)
@@ -158,13 +159,13 @@ func (c *userController) UpdateUser(ctx *gin.Context) {
 }
 
 // DeleteUser godoc
-// @Tags     User
-// @Summary  delete current user based on JWT
-// @Success  200 {object} utils.HttpSuccess[string]
-// @Failure  400 {object} utils.HttpError
-// @Failure  500 {object} utils.HttpError
-// @Router   /user [delete]
-// @Security BearerAuth
+//	@Tags		User
+//	@Summary	delete current user based on JWT
+//	@Success	200	{object}	utils.HttpSuccess[string]
+//	@Failure	400	{object}	utils.HttpError
+//	@Failure	500	{object}	utils.HttpError
+//	@Router		/user [delete]
+//	@Security	BearerAuth
 func (c *userController) DeleteUser(ctx *gin.Context) {
 
 	userCredential, isExist := ctx.Get("user")
@@ -182,4 +183,42 @@ func (c *userController) DeleteUser(ctx *gin.Context) {
 	}
 	message := fmt.Sprintf("User ID %d has been deleted", userModel.ID)
 	ctx.JSON(http.StatusOK, utils.NewHttpSuccess(message, struct{}{}))
+}
+
+// TopUpBalance godoc
+//	@Tags		User
+//	@Summary	top up user balance based on token
+//	@Param		user	body		dto.TopUpBalanceDto	true	"Top Up"
+//	@Success	200	{object}	utils.HttpSuccess[any]
+//	@Failure	400	{object}	utils.HttpError
+//	@Failure	500	{object}	utils.HttpError
+//	@Router		/user/topup [patch]
+//	@Security	BearerAuth
+func (c *userController) TopUpBalance(ctx *gin.Context) {
+
+	var dto dto.TopUpBalanceDto
+	err := ctx.BindJSON(&dto)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.NewHttpError("Bad Request", err.Error()))
+		return
+	}
+
+	userCredential, isExist := ctx.Get("user")
+	userModel := userCredential.(models.UserModel)
+
+	if !isExist {
+		ctx.JSON(http.StatusBadRequest, utils.NewHttpError("Bad Request", errors.New("invalid credential")))
+		return
+	}
+
+	result, err := c.userService.TopUpBalance(&dto, &userModel)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, utils.NewHttpError("Internal Server Error", err.Error()))
+		return
+	}
+
+	message := fmt.Sprintf("User ID %d has been deleted", result.Balance)
+	ctx.JSON(http.StatusOK, utils.NewHttpSuccess(message, ""))
+
 }

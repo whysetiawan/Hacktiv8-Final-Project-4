@@ -101,7 +101,7 @@ func (s *authHelper) JwtClaimsToUserModel(claims jwt.MapClaims) models.UserModel
 		BaseModel: models.BaseModel{
 			ID: uint(data["id"].(float64)),
 		},
-		FullName: data["username"].(string),
+		FullName: data["full_name"].(string),
 		Password: data["password"].(string),
 		Email:    data["email"].(string),
 	}

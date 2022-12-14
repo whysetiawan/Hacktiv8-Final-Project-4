@@ -13,6 +13,7 @@ type UserRepository interface {
 	GetUsers() (*[]models.UserModel, error)
 	UpdateUser(user *models.UserModel) (*models.UserModel, error)
 	DeleteUser(user *models.UserModel) (*models.UserModel, error)
+	TopUpBalance(userID uint, balance uint) (*models.UserModel, error)
 }
 
 type userRepository struct {
@@ -81,4 +82,23 @@ func (r *userRepository) DeleteUser(user *models.UserModel) (*models.UserModel, 
 	}
 
 	return user, nil
+}
+
+func (r *userRepository) TopUpBalance(userID uint, balance uint) (*models.UserModel, error) {
+	user := models.UserModel{
+		BaseModel: models.BaseModel{
+			ID: userID,
+		},
+	}
+	err := r.db.First(&user).Error
+	if err != nil {
+		return &user, err
+	}
+
+	newBalance := user.Balance + int64(balance)
+	err = r.db.Model(&user).Update("balance", newBalance).Error
+	if err != nil {
+		return &user, err
+	}
+	return &user, nil
 }

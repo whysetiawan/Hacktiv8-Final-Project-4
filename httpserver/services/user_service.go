@@ -14,6 +14,7 @@ type UserService interface {
 	GetUsers() (*[]models.UserModel, error)
 	UpdateUser(dto *dto.UpsertUserDto, user *models.UserModel) (*models.UserModel, error)
 	DeleteUser(user *models.UserModel) (bool, error)
+	TopUpBalance(dto *dto.TopUpBalanceDto, user *models.UserModel) (*models.UserModel, error)
 }
 
 type userService struct {
@@ -35,7 +36,7 @@ func (s *userService) Register(dto *dto.UpsertUserDto) (*models.UserModel, error
 	dto.Password = string(hashedPassword)
 
 	user := models.UserModel{
-		FullName: dto.Username,
+		FullName: dto.FullName,
 		Email:    dto.Email,
 		Password: dto.Password,
 	}
@@ -73,7 +74,7 @@ func (s *userService) UpdateUser(dto *dto.UpsertUserDto, user *models.UserModel)
 
 	userModel := models.UserModel{
 		BaseModel: user.BaseModel,
-		FullName:  dto.Username,
+		FullName:  dto.FullName,
 		Email:     dto.Email,
 		Password:  dto.Password,
 	}
@@ -97,4 +98,13 @@ func (s *userService) DeleteUser(user *models.UserModel) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (s *userService) TopUpBalance(dto *dto.TopUpBalanceDto, user *models.UserModel) (*models.UserModel, error) {
+	user, err := s.userRepository.TopUpBalance(user.ID, dto.Balance)
+
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }

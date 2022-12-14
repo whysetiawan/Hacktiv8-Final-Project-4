@@ -16,6 +16,7 @@ func UserRouter(route *gin.RouterGroup, userController controllers.UserControlle
 		userRouter.PUT("", middleware.JwtGuard(authService), userController.UpdateUser)
 		userRouter.DELETE("", middleware.JwtGuard(authService), userController.DeleteUser)
 		userRouter.GET("", middleware.JwtGuard(authService), userController.GetUsers)
+		userRouter.PATCH("topup", middleware.JwtGuard(authService), userController.TopUpBalance)
 	}
 	return userRouter
 }
