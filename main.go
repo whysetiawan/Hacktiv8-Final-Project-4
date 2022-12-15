@@ -48,6 +48,12 @@ func main() {
 
 	routers.UserRouter(appRoute, userController, authService)
 
+	categoryRepository := repositories.NewCategoryRepository(db)
+	categoryService := services.NewCategoryService(categoryRepository)
+	categoryController := controllers.NewCategoryController(categoryService)
+
+	routers.CategoryRouter(appRoute, categoryController, authService)
+
 	docs.SwaggerInfo.Title = "Hacktiv8 final-project-4 API"
 	docs.SwaggerInfo.Description = ""
 	docs.SwaggerInfo.Host = "localhost:8080"
