@@ -1,5 +1,12 @@
 basePath: /api
 definitions:
+  dto.CategoryDTO:
+    properties:
+      type:
+        type: string
+    required:
+    - type
+    type: object
   dto.LoginDto:
     properties:
       email:
@@ -13,6 +20,7 @@ definitions:
   dto.TopUpBalanceDto:
     properties:
       balance:
+        maximum: 1000000000
         type: integer
     required:
     - balance
@@ -30,11 +38,55 @@ definitions:
     - full_name
     - password
     type: object
+  models.CategoryModel:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/models.ProductModel'
+        type: array
+      sold_product_amount:
+        type: integer
+      type:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
   models.LoginResponse:
     properties:
       access_token:
         type: string
       refresh_token:
+        type: string
+    type: object
+  models.ProductModel:
+    properties:
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      price:
+        type: integer
+      stock:
+        type: integer
+      title:
+        type: string
+      transaction_history:
+        items:
+          $ref: '#/definitions/models.TransactionHistoryModel'
+        type: array
+      updated_at:
         type: string
     type: object
   models.TransactionHistoryModel:
@@ -86,6 +138,19 @@ definitions:
       message: {}
       stack_trace: {}
     type: object
+  utils.HttpSuccess-any:
+    properties:
+      data: {}
+      message: {}
+    type: object
+  utils.HttpSuccess-array_models_CategoryModel:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.CategoryModel'
+        type: array
+      message: {}
+    type: object
   utils.HttpSuccess-array_models_UserModel:
     properties:
       data:
@@ -98,6 +163,12 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/dto.UpsertUserDto'
+      message: {}
+    type: object
+  utils.HttpSuccess-models_CategoryModel:
+    properties:
+      data:
+        $ref: '#/definitions/models.CategoryModel'
       message: {}
     type: object
   utils.HttpSuccess-models_LoginResponse:
@@ -122,6 +193,109 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
+  /categories:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-array_models_CategoryModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: get all categories based on user
+      tags:
+      - Categories
+    post:
+      parameters:
+      - description: Create Category DTO
+        in: body
+        name: Category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryDTO'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-models_CategoryModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: create a category
+      tags:
+      - Categories
+  /categories/{id}:
+    delete:
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Delete a category
+      tags:
+      - Categories
+    patch:
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Category On User
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryDTO'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-models_CategoryModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Update a category
+      tags:
+      - Categories
   /user:
     delete:
       responses:
@@ -254,7 +428,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/utils.HttpSuccess-string'
+            $ref: '#/definitions/utils.HttpSuccess-any'
         "400":
           description: Bad Request
           schema:

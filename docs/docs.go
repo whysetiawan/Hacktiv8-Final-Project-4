@@ -24,6 +24,172 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/categories": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "get all categories based on user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpSuccess-array_models_CategoryModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "create a category",
+                "parameters": [
+                    {
+                        "description": "Create Category DTO",
+                        "name": "Category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CategoryDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpSuccess-models_CategoryModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/categories/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete a category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpSuccess-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Update a category",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Category ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Category On User",
+                        "name": "Product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CategoryDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpSuccess-models_CategoryModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/user": {
             "get": {
                 "security": [
@@ -240,7 +406,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.HttpSuccess-string"
+                            "$ref": "#/definitions/utils.HttpSuccess-any"
                         }
                     },
                     "400": {
@@ -260,6 +426,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CategoryDTO": {
+            "type": "object",
+            "required": [
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.LoginDto": {
             "type": "object",
             "required": [
@@ -282,7 +459,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "balance": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 1000000000
                 }
             }
         },
@@ -305,6 +483,38 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CategoryModel": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductModel"
+                    }
+                },
+                "sold_product_amount": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.LoginResponse": {
             "type": "object",
             "properties": {
@@ -312,6 +522,41 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProductModel": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "transaction_history": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TransactionHistoryModel"
+                    }
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -390,6 +635,25 @@ const docTemplate = `{
                 "stack_trace": {}
             }
         },
+        "utils.HttpSuccess-any": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {}
+            }
+        },
+        "utils.HttpSuccess-array_models_CategoryModel": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CategoryModel"
+                    }
+                },
+                "message": {}
+            }
+        },
         "utils.HttpSuccess-array_models_UserModel": {
             "type": "object",
             "properties": {
@@ -407,6 +671,15 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/dto.UpsertUserDto"
+                },
+                "message": {}
+            }
+        },
+        "utils.HttpSuccess-models_CategoryModel": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.CategoryModel"
                 },
                 "message": {}
             }
