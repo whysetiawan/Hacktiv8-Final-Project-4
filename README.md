@@ -62,10 +62,10 @@ config/gorm.go // Database Configuration
 - Auth
 - Transaction History
 
-2. Febri
-
+2. Muhammad Febri Andani
+ 
 - Product
 
-3. Zaidan
+3. Zaidan Zulhakim
 
 - Category
