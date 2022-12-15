@@ -7,6 +7,17 @@ definitions:
     required:
     - type
     type: object
+  dto.InputProduct:
+    properties:
+      category_id:
+        type: integer
+      price:
+        type: integer
+      stock:
+        type: integer
+      title:
+        type: string
+    type: object
   dto.LoginDto:
     properties:
       email:
@@ -16,6 +27,36 @@ definitions:
     required:
     - email
     - password
+    type: object
+  dto.Product:
+    properties:
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      price:
+        type: integer
+      stock:
+        type: integer
+      title:
+        type: string
+    type: object
+  dto.ResponseProducts:
+    properties:
+      category_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      price:
+        type: integer
+      stock:
+        type: integer
+      title:
+        type: string
     type: object
   dto.TopUpBalanceDto:
     properties:
@@ -143,6 +184,14 @@ definitions:
       data: {}
       message: {}
     type: object
+  utils.HttpSuccess-array_dto_ResponseProducts:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.ResponseProducts'
+        type: array
+      message: {}
+    type: object
   utils.HttpSuccess-array_models_CategoryModel:
     properties:
       data:
@@ -157,6 +206,12 @@ definitions:
         items:
           $ref: '#/definitions/models.UserModel'
         type: array
+      message: {}
+    type: object
+  utils.HttpSuccess-dto_Product:
+    properties:
+      data:
+        $ref: '#/definitions/dto.Product'
       message: {}
     type: object
   utils.HttpSuccess-dto_UpsertUserDto:
@@ -296,6 +351,110 @@ paths:
       summary: Update a category
       tags:
       - Categories
+  /product:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-array_dto_ResponseProducts'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: get all product
+      tags:
+      - Product
+  /product/{id}:
+    delete:
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Delete a Product
+      tags:
+      - Product
+    put:
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Category On User
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Product'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-dto_Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Update a product
+      tags:
+      - Product
+  /product/create:
+    post:
+      parameters:
+      - description: Create Category DTO
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InputProduct'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: create a product
+      tags:
+      - Product
   /user:
     delete:
       responses:

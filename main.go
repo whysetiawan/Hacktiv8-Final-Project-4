@@ -46,7 +46,12 @@ func main() {
 	userService := services.NewUserService(userRepository)
 	userController := controllers.NewUserController(userService, authService)
 
+	productRepo := repositories.NewProductRepo(db)
+	productService := services.NewProductService(productRepo)
+	productController := controllers.NewProductController(productService, authService)
+
 	routers.UserRouter(appRoute, userController, authService)
+	routers.ProductRouter(appRoute, productController, authService)
 
 	categoryRepository := repositories.NewCategoryRepository(db)
 	categoryService := services.NewCategoryService(categoryRepository)
@@ -60,6 +65,16 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/api"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
+	// log.Println("Generating Swagger")
+	// path, err := os.Getwd()
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// fmt.Println(path) // for example /home/user
+	// cmd, err := exec.Command("swag", "fmt").Output()
+	// log.Println(cmd)
+	// log.Println("Swagger Generated")
+
 	app.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	app.Run(":8080")
+	app.Run()
 }
