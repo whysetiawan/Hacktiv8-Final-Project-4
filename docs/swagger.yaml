@@ -10,25 +10,21 @@ definitions:
     - email
     - password
     type: object
-  dto.TopUpBalanceDto:
-    properties:
-      balance:
-        type: integer
-    required:
-    - balance
-    type: object
   dto.UpsertUserDto:
     properties:
+      age:
+        type: integer
       email:
-        type: string
-      full_name:
         type: string
       password:
         type: string
+      username:
+        type: string
     required:
+    - age
     - email
-    - full_name
     - password
+    - username
     type: object
   models.LoginResponse:
     properties:
@@ -239,33 +235,6 @@ paths:
           schema:
             $ref: '#/definitions/utils.HttpError'
       summary: create a user
-      tags:
-      - User
-  /user/topup:
-    patch:
-      parameters:
-      - description: Top Up
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/dto.TopUpBalanceDto'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/utils.HttpSuccess-string'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/utils.HttpError'
-      security:
-      - BearerAuth: []
-      summary: top up user balance based on token
       tags:
       - User
 securityDefinitions:

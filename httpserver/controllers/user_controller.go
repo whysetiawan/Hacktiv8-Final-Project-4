@@ -35,6 +35,7 @@ func NewUserController(
 }
 
 // Register godoc
+//
 //	@Tags		User
 //	@Summary	create a user
 //	@Param		user	body		dto.UpsertUserDto	true	"Create User DTO"
@@ -61,6 +62,7 @@ func (c *userController) Register(ctx *gin.Context) {
 }
 
 // Login godoc
+//
 //	@Tags		User
 //	@Summary	login a user
 //	@Param		user	body		dto.LoginDto	true	"Login User DTO"
@@ -104,6 +106,7 @@ func (c *userController) Login(ctx *gin.Context) {
 }
 
 // GetUsers godoc
+//
 //	@Tags		User
 //	@Summary	get mutilple users
 //	@Success	200	{object}	utils.HttpSuccess[[]models.UserModel]
@@ -124,6 +127,7 @@ func (c *userController) GetUsers(ctx *gin.Context) {
 }
 
 // UpdateUser godoc
+//
 //	@Tags		User
 //	@Summary	create a user
 //	@Param		user	body		dto.UpsertUserDto	true	"Update User Based On Token"
@@ -159,6 +163,7 @@ func (c *userController) UpdateUser(ctx *gin.Context) {
 }
 
 // DeleteUser godoc
+//
 //	@Tags		User
 //	@Summary	delete current user based on JWT
 //	@Success	200	{object}	utils.HttpSuccess[string]
@@ -186,6 +191,7 @@ func (c *userController) DeleteUser(ctx *gin.Context) {
 }
 
 // TopUpBalance godoc
+//
 //	@Tags		User
 //	@Summary	top up user balance based on token
 //	@Param		user	body		dto.TopUpBalanceDto	true	"Top Up"

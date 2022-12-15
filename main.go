@@ -9,12 +9,11 @@ import (
 	"final-project-4/utils"
 	"log"
 
-	"final-project-4/docs"
-
 	"github.com/gin-gonic/gin" // swagger embed files
 	"github.com/joho/godotenv"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
+	"github.com/swaggo/swag/example/basic/docs"
 )
 
 // @contact.name  API Support
@@ -46,14 +45,29 @@ func main() {
 	userService := services.NewUserService(userRepository)
 	userController := controllers.NewUserController(userService, authService)
 
+	productRepo := repositories.NewProductRepo(db)
+	productService := services.NewProductService(productRepo)
+	productController := controllers.NewProductController(productService, authService)
+
 	routers.UserRouter(appRoute, userController, authService)
+	routers.ProductRouter(appRoute, productController, authService)
 
 	docs.SwaggerInfo.Title = "Hacktiv8 final-project-4 API"
-	docs.SwaggerInfo.Description = ""
-	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Description = "This is just a simple TODO List"
+	docs.SwaggerInfo.Host = "hacktiv8-final-project-4-production.up.railway.app"
 	docs.SwaggerInfo.BasePath = "/api"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
+	// log.Println("Generating Swagger")
+	// path, err := os.Getwd()
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// fmt.Println(path) // for example /home/user
+	// cmd, err := exec.Command("swag", "fmt").Output()
+	// log.Println(cmd)
+	// log.Println("Swagger Generated")
+
 	app.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	app.Run(":8080")
+	app.Run()
 }
