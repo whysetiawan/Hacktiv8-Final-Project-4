@@ -68,7 +68,7 @@ func main() {
 
 	docs.SwaggerInfo.Title = "Hacktiv8 final-project-4 API"
 	docs.SwaggerInfo.Description = ""
-	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Host = "hacktiv8-final-project-4-production.up.railway.app"
 	docs.SwaggerInfo.BasePath = "/api"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
