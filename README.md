@@ -6,8 +6,8 @@ This project is deployed at [URL](https://hacktiv8-final-project-4-production.up
 
 ## Getting Started
 
-1. Clone this project or run `git clone https://github.com/whysetiawan/Hacktiv8-Final-Project-2.git`
-2. `cd Hacktiv8-Final-Project-2`
+1. Clone this project or run `git clone https://github.com/whysetiawan/Hacktiv8-Final-Project-4.git`
+2. `cd Hacktiv8-Final-Project-4`
 3. if you have **npm** installed just run `./Makefile` or `go run main.go`
 
 ## Project Structure
