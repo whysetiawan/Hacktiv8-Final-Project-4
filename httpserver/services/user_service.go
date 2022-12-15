@@ -12,6 +12,7 @@ type UserService interface {
 	Register(dto *dto.UpsertUserDto) (*models.UserModel, error)
 	Login(dto *dto.LoginDto) (*models.UserModel, error)
 	GetUsers() (*[]models.UserModel, error)
+	GetUserByID(userID uint) (*models.UserModel, error)
 	UpdateUser(dto *dto.UpsertUserDto, user *models.UserModel) (*models.UserModel, error)
 	DeleteUser(user *models.UserModel) (bool, error)
 	TopUpBalance(dto *dto.TopUpBalanceDto, user *models.UserModel) (*models.UserModel, error)
@@ -77,6 +78,7 @@ func (s *userService) UpdateUser(dto *dto.UpsertUserDto, user *models.UserModel)
 		FullName:  dto.FullName,
 		Email:     dto.Email,
 		Password:  dto.Password,
+		Role:      dto.Role,
 	}
 
 	user, err = s.userRepository.UpdateUser(&userModel)
@@ -90,6 +92,14 @@ func (s *userService) UpdateUser(dto *dto.UpsertUserDto, user *models.UserModel)
 
 func (s *userService) GetUsers() (*[]models.UserModel, error) {
 	return s.userRepository.GetUsers()
+}
+func (s *userService) GetUserByID(userID uint) (*models.UserModel, error) {
+	user := &models.UserModel{
+		BaseModel: models.BaseModel{
+			ID: userID,
+		},
+	}
+	return s.userRepository.GetUser(user)
 }
 
 func (s *userService) DeleteUser(user *models.UserModel) (bool, error) {

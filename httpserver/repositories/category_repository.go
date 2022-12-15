@@ -4,6 +4,7 @@ import (
 	"final-project-4/httpserver/models"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type CategoryRepository interface {
@@ -11,6 +12,7 @@ type CategoryRepository interface {
 	GetCategories(category *models.CategoryModel) (*[]models.CategoryModel, error)
 	UpdateCategory(category *models.CategoryModel) (*models.CategoryModel, error)
 	DeleteCategory(category *models.CategoryModel) (*models.CategoryModel, error)
+	GetCategory(category *models.CategoryModel) (*models.CategoryModel, error)
 }
 
 type categoryRepository struct {
@@ -33,7 +35,7 @@ func (r *categoryRepository) CreateCategory(category *models.CategoryModel) (*mo
 
 func (r *categoryRepository) GetCategories(category *models.CategoryModel) (*[]models.CategoryModel, error) {
 	var categories []models.CategoryModel
-	err := r.db.Find(&categories).Order("id desc").Error
+	err := r.db.Preload(clause.Associations).Find(&categories).Order("id desc").Error
 	if err != nil {
 		return &categories, err
 	}
@@ -50,6 +52,14 @@ func (r *categoryRepository) UpdateCategory(category *models.CategoryModel) (*mo
 
 func (r *categoryRepository) DeleteCategory(category *models.CategoryModel) (*models.CategoryModel, error) {
 	err := r.db.Model(category).Delete(category).Error
+	if err != nil {
+		return category, err
+	}
+	return category, nil
+}
+
+func (r *categoryRepository) GetCategory(category *models.CategoryModel) (*models.CategoryModel, error) {
+	err := r.db.Where("id = ?", category.ID).First(category).Order("id desc").Error
 	if err != nil {
 		return category, err
 	}

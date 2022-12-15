@@ -15,10 +15,10 @@ type ProductService interface {
 }
 
 type productService struct {
-	productRepo repositories.Product
+	productRepo repositories.ProductRepo
 }
 
-func NewProductService(pr repositories.Product) *productService {
+func NewProductService(pr repositories.ProductRepo) *productService {
 	return &productService{pr}
 }
 

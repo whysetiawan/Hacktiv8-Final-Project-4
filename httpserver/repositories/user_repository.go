@@ -11,6 +11,7 @@ type UserRepository interface {
 	Register(user *models.UserModel) (*models.UserModel, error)
 	Login(user *models.UserModel) (*models.UserModel, error)
 	GetUsers() (*[]models.UserModel, error)
+	GetUser(user *models.UserModel) (*models.UserModel, error)
 	UpdateUser(user *models.UserModel) (*models.UserModel, error)
 	DeleteUser(user *models.UserModel) (*models.UserModel, error)
 	TopUpBalance(userID uint, balance uint) (*models.UserModel, error)
@@ -64,7 +65,7 @@ func (r *userRepository) GetUsers() (*[]models.UserModel, error) {
 }
 
 func (r *userRepository) UpdateUser(user *models.UserModel) (*models.UserModel, error) {
-	err := r.db.Model(user).Omit("SocialMedia", "Photo", "Comment").Updates(user).Error
+	err := r.db.Model(user).Omit("TransactionHistory").Updates(user).Error
 
 	if err != nil {
 		return user, err

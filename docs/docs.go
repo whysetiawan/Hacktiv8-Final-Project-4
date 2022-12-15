@@ -358,6 +358,116 @@ const docTemplate = `{
                 }
             }
         },
+        "/transactions": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "create a transaction",
+                "parameters": [
+                    {
+                        "description": "CreateTransactionDto",
+                        "name": "Transaction",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateTransactionDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpSuccess-models_TransactionHistoryModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/my-transactions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "get all current user Transactions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpSuccess-array_models_TransactionHistoryModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/user-transactions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "get all Transactions for admin",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpSuccess-array_models_TransactionHistoryModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/user": {
             "get": {
                 "security": [
@@ -605,6 +715,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateTransactionDto": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.InputProduct": {
             "type": "object",
             "properties": {
@@ -700,7 +821,8 @@ const docTemplate = `{
             "required": [
                 "email",
                 "full_name",
-                "password"
+                "password",
+                "role"
             ],
             "properties": {
                 "email": {
@@ -710,6 +832,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 }
             }
@@ -897,6 +1022,18 @@ const docTemplate = `{
                 "message": {}
             }
         },
+        "utils.HttpSuccess-array_models_TransactionHistoryModel": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.TransactionHistoryModel"
+                    }
+                },
+                "message": {}
+            }
+        },
         "utils.HttpSuccess-array_models_UserModel": {
             "type": "object",
             "properties": {
@@ -941,6 +1078,15 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/models.LoginResponse"
+                },
+                "message": {}
+            }
+        },
+        "utils.HttpSuccess-models_TransactionHistoryModel": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.TransactionHistoryModel"
                 },
                 "message": {}
             }

@@ -7,9 +7,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type Product interface {
+type ProductRepo interface {
 	Save(product models.ProductModel) (models.ProductModel, error)
 	GetProducts() ([]dto.ResponseProducts, error)
+	GetProduct(product *models.ProductModel) (*models.ProductModel, error)
 	UpdateProduct(product *dto.Product) (*dto.Product, error)
 	DeleteProduct(product *dto.Product) (*dto.Product, error)
 }
@@ -58,6 +59,15 @@ func (pr *productRepo) UpdateProduct(product *dto.Product) (*dto.Product, error)
 func (pr *productRepo) DeleteProduct(product *dto.Product) (*dto.Product, error) {
 	err := pr.db.Model(product).Delete(product).Error
 
+	if err != nil {
+		return product, err
+	}
+	return product, nil
+
+}
+
+func (pr *productRepo) GetProduct(product *models.ProductModel) (*models.ProductModel, error) {
+	err := pr.db.Find(product).Error
 	if err != nil {
 		return product, err
 	}

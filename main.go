@@ -50,14 +50,23 @@ func main() {
 	productService := services.NewProductService(productRepo)
 	productController := controllers.NewProductController(productService, authService)
 
-	routers.UserRouter(appRoute, userController, authService)
-	routers.ProductRouter(appRoute, productController, authService)
-
 	categoryRepository := repositories.NewCategoryRepository(db)
 	categoryService := services.NewCategoryService(categoryRepository)
 	categoryController := controllers.NewCategoryController(categoryService)
 
+	transactionRepo := repositories.NewTransactionHistoryRepository(db)
+	transactionService := services.NewTransactionHistoryService(
+		transactionRepo,
+		productRepo,
+		userRepository,
+		categoryRepository,
+	)
+	transactionController := controllers.NewTransactionHistoryController(transactionService)
+
+	routers.UserRouter(appRoute, userController, authService)
+	routers.ProductRouter(appRoute, productController, authService)
 	routers.CategoryRouter(appRoute, categoryController, authService)
+	routers.TransactionHistoryRouter(appRoute, transactionController, authService)
 
 	docs.SwaggerInfo.Title = "Hacktiv8 final-project-4 API"
 	docs.SwaggerInfo.Description = ""

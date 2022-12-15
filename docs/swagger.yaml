@@ -7,6 +7,13 @@ definitions:
     required:
     - type
     type: object
+  dto.CreateTransactionDto:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+    type: object
   dto.InputProduct:
     properties:
       category_id:
@@ -74,10 +81,13 @@ definitions:
         type: string
       password:
         type: string
+      role:
+        type: string
     required:
     - email
     - full_name
     - password
+    - role
     type: object
   models.CategoryModel:
     properties:
@@ -200,6 +210,14 @@ definitions:
         type: array
       message: {}
     type: object
+  utils.HttpSuccess-array_models_TransactionHistoryModel:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.TransactionHistoryModel'
+        type: array
+      message: {}
+    type: object
   utils.HttpSuccess-array_models_UserModel:
     properties:
       data:
@@ -230,6 +248,12 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/models.LoginResponse'
+      message: {}
+    type: object
+  utils.HttpSuccess-models_TransactionHistoryModel:
+    properties:
+      data:
+        $ref: '#/definitions/models.TransactionHistoryModel'
       message: {}
     type: object
   utils.HttpSuccess-string:
@@ -455,6 +479,73 @@ paths:
       summary: create a product
       tags:
       - Product
+  /transactions:
+    post:
+      parameters:
+      - description: CreateTransactionDto
+        in: body
+        name: Transaction
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTransactionDto'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-models_TransactionHistoryModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: create a transaction
+      tags:
+      - Transactions
+  /transactions/my-transactions:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-array_models_TransactionHistoryModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: get all current user Transactions
+      tags:
+      - Transactions
+  /transactions/user-transactions:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.HttpSuccess-array_models_TransactionHistoryModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HttpError'
+      security:
+      - BearerAuth: []
+      summary: get all Transactions for admin
+      tags:
+      - Transactions
   /user:
     delete:
       responses:
